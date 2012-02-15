@@ -1,0 +1,62 @@
+\documentclass[a4paper,12pt]{dinbrief}
+\usepackage{german}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{graphicx} 
+\usepackage{ifthen}
+\usepackage{textcomp}
+\usepackage[official]{eurosym}
+\usepackage{multirow}
+\renewcommand\sfdefault{phv}
+%\renewcommand\familydefault{\sfdefault}
+\begin{document}
+\subject{\textbf{\sffamily Reisekostenabrechnung {NAME} {BEGINN},{BEGINNZEIT}-{ENDE},{ENDEZEIT} } }
+\Datum{{DATUM}}
+\setaddressheight{3cm}
+\begin{letter}
+
+%\input{corikabrko}
+
+\textbf{Persönliche Angaben}
+\begin{tabular}[t]{ll}
+\textbf{Name:} & {NAME} \\
+\textbf{Straße:} & {STRASSE} \\
+\textbf{PLZ/Ort:} & {ORT} \\
+\end{tabular}
+\vspace{2cm}
+\begin{tabular}[t]{ll}
+\textbf{Beginn der Reise} & {BEGINN}, {BEGINNZEIT} \\
+\textbf{Ende der Reise} & {ENDE}, {ENDEZEIT} \\
+\textbf{Zweck der Reise} & {GRUND} \\
+\textbf{Funktion im BDZ} &  {FKT} \\
+\\
+\textbf{Konto-Nummer} & {KONTO} \\
+\textbf{ BLZ } & {BLZ} \\
+\textbf{Name der Bank} & {BANK} \\
+\end{tabular}
+
+\textbf{Entstandene Kosten}\\
+\begin{tabular}[t]{lll}
+<!-- BEGIN KOSTEN_ROW -->
+{KOSTEN_DATA}
+<!-- END KOSTEN_ROW -->
+\end{tabular}
+
+{ABWEICHUNGEN} \\
+
+<!-- BEGIN MITFAHRER -->
+\begin{tabular}[t]{llr}
+\textbf{Mitfahrer im PKW:}\\
+<!-- BEGIN MITF_ROW -->
+{MITF_NAME} & {MITF_KM} km à {MITF_KM_RATE} EUR & {MITF_SUM} EUR\\
+<!-- END MITF_ROW -->
+\end{tabular}
+<!-- END MITFAHRER -->
+\begin{tabular}[t]{llr}
+\textbf{Tagegelder:}\\
+{TG_DATA}
+\end{tabular}
+\end{letter}
+\end{document}
+   

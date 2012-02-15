@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+	<meta charset='utf-8'>
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css" type="text/css" media="all" />
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="common-functions.js"></script>
+	<script type="text/javascript">
+var mitf_rate = {MITFAHRER_RATE};
+var tg25_rate = {UEBER24_RATE};
+var tg14_rate = {BIS24_RATE};
+var tg8_rate = {BIS14_RATE};
+var pkw_rate = {PKW_KM_RATE};
+
+$(document).ready(function() {
+	datepicker_german();
+    $('#pkwkm').change(function() {
+		updateSum('pkwkm',pkw_rate);
+    });
+
+	$('#sonst').change(updateMasterSum);
+	$('#bahn').change(updateMasterSum);
+	$('#oeff').change(updateMasterSum);
+	$('#taxi').change(updateMasterSum);
+
+	$('#tg_f1').change(updateTagegelder);
+	$('#tg_m1').change(updateTagegelder);
+	$('#tg_a1').change(updateTagegelder);
+
+	$('#mitfkm1').change(function() { 
+		updateMitfahrer(1);
+	});
+
+	$( ".datepicker" ).datepicker();
+	$( "#tabs" ).tabs();
+	$('#btnAdd').click(function() {
+		add_mitfahrer();
+	});
+	$('#btnDel').click(function() {
+		del_mitfahrer();
+	});
+	//$('#btnDel').attr('disabled','disabled');
+	$('#beginn').change(updateTagegelder);
+	$('#ende').change(updateTagegelder);
+	$('#beginnZeit').change(updateTagegelder);
+	$('#endeZeit').change(updateTagegelder);
+
+});
+
+	</script>
+</head>
+<body>
+<h1>Bund Deutscher Zupfmusiker</h1> 
+						
+<h2>Reisekostenabrechnung</h2>
+				
+<form method="POST">		
+<div id="tabs">
+<ul>
+	<li><a href="#tabs-1">Angaben zur Person</a></li>
+	<li><a href="#tabs-2">Reise</a></li>
+	<li><a href="#tabs-3">Entstandene Kosten</a></li>
+</ul>
+<div id="tabs-1">
+<table>
+	<tr>
+		<td class="label">Vorname und Name:</td>
+		<td><input type="text" name="name"/></td>
+	</tr>
+	<tr>
+		<td class="label">Strasse:</td>
+		<td><input type="text" name="strasse"/></td>
+	</tr>
+	<tr>
+		<td class="label">PLZ/Ort:</td>
+		<td><input type="text" name="ort"/></td>
+	</tr>
+	<tr>
+		<td class="label">Funktion im BDZ:</td>
+		<td><input type="text" name="fkt"/></td>
+	</tr>	
+
+	<tr>
+		<td colspan="2"><h2>Bankverbindung</h2></td>
+	</tr>
+	<tr>
+		<td class="label">Bankleitzahl:</td>
+		<td><input type="text" name="blz"/></td>
+	</tr>
+	<tr>
+		<td class="label">Konto-Nr.:</td>
+		<td><input type="text" name="konto"/></td>
+	</tr>
+	<tr>
+		<td class="label">Name der Bank:</td>
+		<td><input type="text" name="bank"/></td>
+	</tr>
+</table>
+</div>
+<div id="tabs-2">
+<h2>Reiseroute</h2>
+<table>
+	<tr>
+		<td class="label">von:</td>
+		<td><input type="text" name="von"/></td>
+	</tr>
+	<tr>
+		<td class="label">nach:</td>
+		<td><input type="text" name="nach"/></td>
+	</tr>
+	<tr>
+		<td class="label">&uuml;ber:</td>
+		<td><input type="text" name="ueber"/></td>
+	</tr>
+	<tr>
+		<td class="label">Beginn der Reise:</td>
+		<td><input class="datepicker" type="text" id="beginn" name="beginn"/></td>
+		<td class="label">Uhrzeit:</td>
+		<td><input type="text" id="beginnZeit" name="beginnZeit"/></td>
+	</tr>
+	<tr>
+		<td class="label">Ende der Reise:</td>
+		<td><input class="datepicker" id="ende" type="text" name="ende"/></td>
+		<td class="label">Uhrzeit:</td>
+		<td><input type="text" id="endeZeit" name="endeZeit"/></td>
+	</tr>
+	<tr>
+		<td class="label">Grund der Reise:</td>
+		<td><input type="text" name="grund"/></td>
+	</tr>
+</table>
+</div>
+
+<div id="tabs-3">					
+<h2>Entstandene Kosten</h2>
+<table>						
+	<tr>
+		<td class="label">Fahrtkosten Deutsche Bahn 2. Klasse</td>
+		<td colspan="2">&nbsp;</td>
+		<td><input class="summand" type="text" id="bahn" name="bahn" size="4"/> €</td>
+	</tr>
+	<tr>
+		<td class="label">Fahrtkosten Bus, Straßenbahn, U-Bahn</td>
+		<td colspan="2">&nbsp;</td>
+		<td><input class="summand" type="text" size="4" id="oeff" name="oeff"/> €</td>
+	</tr>
+	<tr>
+		<td class="label">Taxi (mit Begründung)</td>
+		<td colspan="2">&nbsp;</td>
+		<td><input class="summand" type="text" size="4" id="taxi" name="taxi"/> €</td>
+	</tr>
+	<tr>
+		<td class="label">Fahrt mit eigenem PKW</td>
+		<td><input type="text" size="4" id="pkwkm" name="pkwkm"/></td>
+		<td>km zu {PKW_KM_RATE} €</td>
+		<td><input class="summand" readonly="readonly" type="text" size="4" id="pkwkm_sum" name="pkwkm_sum"/> €</td>
+	</tr>
+	<tr>
+		<td class="label">Begründung für Abweichungen (z.B. Sonderpreise Bahn, Flug, Taxi, ...)</td>
+		<td><input type="text" name="abweichungen"/></td>
+	</tr>
+	<tr>
+		<td colspan="4"><h2>Mitfahrer im PKW:</h2></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+		<div id="mitf1" style="margin-bottom:4px;" class="mitfahrer">
+        	Name: <input class="mitfname" type="text" name="mitfname1" id="mitfname1" />
+        	<input type="text" name="mitfkm1" id="mitfkm1" class="mitfkm"/>
+			&nbsp;km zu {MITFAHRER_RATE} € = <input class="summand mitfkm_sum" type="text" readonly="readonly" id="mitfkm_sum1" name="mitfkm_sum1"/>
+	    </div>
+    	<div>
+        	<input type="button" id="btnAdd" value="+" />
+        	<input type="button" id="btnDel" disabled="disabled" value="-" />
+    	</div>
+		</td>
+	</tr>
+	</table>
+
+	<h2>Tagegeld</h2>
+	<table border="1" width="1000">
+	<tr>
+		<td>&nbsp;</td>
+		<td>F</td>
+		<td>M</td>
+		<td>A</td>
+		<td>Tagegeld</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr id="tgrow1" class="tgrow">
+		<td class="tg_data"><input type="text" id="tg_tag1" name="tg_tag1" readonly="readonly" class="tg_tag"/></td>
+		<td class="tg_data"><input type="checkbox" id="tg_f1" name="tg_f1" class="tg_f"/></td>
+		<td class="tg_data"><input type="checkbox" id="tg_m1" name="tg_m1" class="tg_m"/></td>
+		<td class="tg_data"><input type="checkbox" id="tg_a1" name="tg_a1" class="tg_a"/></td>
+		<td class="label tg_data"><input type="text" class="tg_tariff" id="tg_tariff1" name="tg_tariff1" readonly="readonly" size="5"/>&nbsp; € </td>
+		<td class="tg_data sum"><input class="summand tg_sum" type="text" id="tg_sum1" name="tg_sum1" readonly="readonly" size="10" />&nbsp;€</td>
+	</tr>
+	<tr>
+		<td class="label">Sonstige Ausgaben (mit Begründung)</td>
+		<td colspan="4">&nbsp;</td>
+		<td class="sum"><input class="summand" type="text" size="4" name="sonst" id="sonst"/>&nbsp;€</td>
+	</tr>
+	<tr>
+		<td>Summe</td>
+		<td colspan="4">&nbsp;</td>
+		<td class="tg_data sum">
+			<input type="text" size="10" readonly="readonly" id="master_sum"/>&nbsp;€</td>
+	</tr>
+</table>						
+<input type="submit" value="Absenden"/><br/>
+</div>
+</div>
+</form>
+</body>
+</html>

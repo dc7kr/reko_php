@@ -1,0 +1,61 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{german}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage[a4paper,vmargin={20mm,20mm},hmargin={20mm,10mm}]{geometry}
+\usepackage{graphicx} 
+\usepackage{ifthen}
+\usepackage{textcomp}
+\usepackage[official]{eurosym}
+\usepackage{multirow}
+\renewcommand\sfdefault{phv}
+%\renewcommand\familydefault{\sfdefault}
+\renewcommand{\familydefault}{\sfdefault}
+\begin{document}
+\setlength{\parindent}{0mm}
+\begin{center}
+{\huge Reisekostenabrechnung}\\
+{\large {NAME}} \\
+\end{center}
+
+%\input{corikabrko}
+\section{Persönliche Angaben}
+\begin{tabular}[t]{ll}
+\textbf{Name:} & {NAME} \\
+\textbf{Straße:} & Turmstr. 65 \\
+\textbf{PLZ/Ort:} & 46539 Dinslaken \\
+\textbf{Funktion im BDZ} &  {FKT} \\
+\\
+\textbf{Konto-Nummer:} & {KONTO} \\
+\textbf{Bankleitzahl:} & {BLZ} \\
+\textbf{Name der Bank:} & {BANK} \\
+\end{tabular}
+\section{Reisedetails}
+\begin{tabular}[t]{ll}
+\textbf{Beginn der Reise} & {BEGINN}, {BEGINNZEIT} \\
+\textbf{Ende der Reise} & {ENDE}, {ENDEZEIT} \\
+\textbf{Zweck der Reise} & {GRUND} \\
+\end{tabular}
+\section{Entstandene Kosten}
+\begin{tabular}[t]{lrlr}
+<!-- BEGIN COST_ROW -->
+{COST_DESCR} & {COST_UNIT} & {COST_EACH} & {COST_SUM} \\
+<!-- END COST_ROW -->
+\hline
+\textbf{Summe} & & & \textbf{{MASTER_SUM} €} \\
+\hline
+\hline
+\end{tabular} \\
+\vspace{1cm}
+
+\textbf{Begründung für Abweichungen (z.B. Sonderpreise Bahn, Flug, Taxi, ...)} \\
+{ABWEICHUNGEN}
+
+\vfill
+\begin{tabular}{lp{4em}l}
+\hspace{7cm}   && \hspace{7cm} \\
+\cline{1-1}\cline{3-3}
+ Ort, Datum     && Unterschrift
+\end{tabular} 
+\end{document}
