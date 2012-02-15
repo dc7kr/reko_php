@@ -24,6 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 	$kostenLabel = array( "bahn","oeff","taxi","pkwkm","sonst");
 
+
+	$route = $_REQUEST["von"];
+	if (isset ($_REQUEST["ueber"]) && strlen($_REQUEST["ueber"]>0)) {
+		$route.="+ über ".$_REQUEST["ueber"];
+	}
+	$route.= " nach ".$_REQUEST["nach"];
+
+	$tpl->setVariable("ROUTE",$route);
+	
 	foreach  ( $common as  $key ) {
 		$tpl->setVariable(strtoupper($key),$_REQUEST[$key]);	
 	}
@@ -53,8 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	}
 
 	$tpl->setCurrentBlock();
-	if ( isset ($_REQUEST["abweichungen"])) {
+	if ( isset ($_REQUEST["abweichungen"]) && strlen($_REQUEST["abweichungen"])>0) {
 		$tpl->setVariable("ABWEICHUNGEN","\\textbf{".$labels["abweichungen"]."} \\\\ ".$_REQUEST["abweichungen"]."\\\\");
+	} else {
+		$tpl->setVariable("ABWEICHUNGEN"," ");
 	}
 /*Tagegeld & 1.1.2011  & & 12 € \\
 - Abzug Frühstück,Mittagessen,Abendessen & & & -12.00 € \\
@@ -69,18 +80,55 @@ Tagegeld & 3.1.2011 & & 12.00 € \\
 		$name = $_REQUEST["mitfname".$mitfNr];
 		$val = $_REQUEST["mitfkm".$mitfNr];
 		$tpl->setVariable("COST_DESCR",$labels["mitf"]." ".$name);
-		$tpl->setVariable("COST_UNIT",$val);
+		$tpl->setVariable("COST_UNIT",sprintf("%d km",$val));
 		$tpl->setVariable("COST_EACH","à ".money_format($EUR_FMT,$mitfahrerKm));
 		$tpl->setVariable("COST_SUM",money_format($EUR_FMT,$mitfahrerKm*$val));
 		$tpl->parseCurrentBlock();
-		$kosten+=$val*$mitfKm;
+		$kosten+=$val*$mitfahrerKm;
 		$mitfNr++;
 	}
-	$tg_data="1.1.2011 & 12 € \\\\";
-	$tpl->setVariable("TG_DATA",$tg_data);
+
+
+	$tgNr =1;
+	while (isset ($_REQUEST["tg_sum".$tgNr]) ) {
+		$tpl->setCurrentBlock("COST_ROW");
+		$amount = $_REQUEST["tg_sum".$tgNr];
+		$tgRate = $_REQUEST["tg_tariff".$tgNr];
+		$reduction =0;
+		$reductionDescr="";
+		if (array_key_exists("tg_f".$tgNr,$_REQUEST)) {
+			$reduction+=$ueber24*0.2; 
+			$reductionDescr="Frühstück";
+		}
+		if (array_key_exists("tg_m".$tgNr,$_REQUEST)) { 
+			if ($reduction>0) { $reductionDescr.=", "; }
+			$reduction+=$ueber24*0.4; 
+			$reductionDescr.="Mittagessen";
+		}
+		if (array_key_exists("tg_a".$tgNr,$_REQUEST)) { 
+			if ($reduction>0) { $reductionDescr.=", "; }
+			$reduction+=$ueber24*0.4; 
+			$reductionDescr.="Abendessen";
+		}
+		$tpl->setVariable("COST_DESCR",$labels["tg"]);
+		$tpl->setVariable("COST_UNIT",$_REQUEST["tg_tag".$tgNr]);
+		$tpl->setVariable("COST_EACH"," ");
+		$tpl->setVariable("COST_SUM",money_format($EUR_FMT,$tgRate));
+		$tpl->parseCurrentBlock();
+		if ($reduction > 0 ) {
+			$tpl->setCurrentBlock("COST_ROW");
+			$tpl->setVariable("COST_DESCR","- Abzug für ".$reductionDescr);
+			$tpl->setVariable("COST_UNIT"," ");
+			$tpl->setVariable("COST_EACH"," ");
+			$tpl->setVariable("COST_SUM", money_format($EUR_FMT, $reduction > $tgRate? -1* $tgRate : -1 * $reduction));
+			$tpl->parseCurrentBlock();
+		}		
+		$kosten+=$amount;
+		$tgNr++;
+	}	
 
 	$tpl->setCurrentBlock();
-	$tpl->setVariable("MASTER_SUM",$kosten);
+	$tpl->setVariable("MASTER_SUM",money_format($EUR_FMT,$kosten));
 
 
 //	$tpl->closingDelimiter=">#";
@@ -92,6 +140,7 @@ Tagegeld & 3.1.2011 & & 12.00 € \\
 	fwrite($paramFile,$tpl->get());
 	fclose($paramFile);
 
+//	print_r($_REQUEST);
 	Header("Content-type: application/pdf");
 	header('Content-Disposition: attachment; filename="reko.pdf"');
 	

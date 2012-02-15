@@ -15,21 +15,9 @@ function parseTime(timeStr) {
 	return date;
 }
 
-function updateCounts(secs, counts) {
-	if ( secs > 8*3600)  {
-		if ( secs < 14*3600 ) {
-			counts[0]++;
-		} else if ( secs <= 24*3600) {
-			counts[1]++;
-		} else {
-			counts[2]++;
-		}
-	}
-}
-
 function adjustTgRows(begDate,endDate) {
-	var begFull = begDate;
-	var endFull = endDate;
+	var begFull = new Date(begDate.getTime());
+	var endFull = new Date(endDate.getTime());
 	begFull.setHours(0);
 	begFull.setMinutes(0);
 	begFull.setSeconds(0);
@@ -74,13 +62,14 @@ function adjustTgRows(begDate,endDate) {
 
 	for (var i=1;i<= days ;i++ ) {
 		$('#tg_tag'+i).val($.datepicker.formatDate('dd.mm.yy',curDate));
-		var secondDayBegin = new Date(curDate.getTime()+86400);
+		var secondDayBegin = new Date(curDate.getTime()+86400*1000);
 
 		var hours=0;
 		if ( i == 1 ) {	
-			hours = secondDayBegin.getTime()-begDate.getTime()/86400;
+			hours = secondDayBegin.getTime()-begDate.getTime();
+			hours = hours / 3600000; 
 		} else if ( i == days ) {
-			hours = endDate.getHours()*60+endDate.getMinutes()/60;
+			hours = (endDate.getHours()*60+endDate.getMinutes())/60;
 		} else {
 			hours=25;
 		}
@@ -88,9 +77,9 @@ function adjustTgRows(begDate,endDate) {
 		var tariff=0;
 		if ( hours == 25 ) { 
 			tariff = tg25_rate; 
-		} else if ( hours > 14 ) { 
+		} else if ( hours >= 14 ) { 
 			tariff = tg14_rate; 
-		} else if ( hours > 8) { 
+		} else if ( hours >= 8) { 
 			tariff =tg8_rate; 
 		}
 		$('#tg_tariff'+i).val(tariff);
