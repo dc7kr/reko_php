@@ -2,7 +2,7 @@
 	$bis14 = 6;
 	$bis24 = 12;
 	$ueber24 = 24;
-	$pkwKm = 0.2;
+	$pkwKm = 0.3;
 	$mitfahrerKm =0.02;
 
 
@@ -11,6 +11,7 @@ $labels = array(
 	oeff => "Fahrtkosten Bus, Straßenbahn, U-Bahn",
 	taxi => "Taxi (mit Begründung)",
 	pkwkm => "Fahrt mit eigenem PKW",
+	hotel => "Hotelkosten",
 	mitf => "Mitfahrer",
 	tg => "Tagegeld",
 	sonst => "Sonstige Ausgaben (mit Begründung)",
