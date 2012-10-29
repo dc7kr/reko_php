@@ -22,11 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	$tpl->setVariable("DATUM",strftime("%d.%m.%Y"));
 	$common = array(  "name","strasse","ort","fkt","konto","blz","bank","grund","beginn", "von","nach","ueber","beginnZeit","ende","endeZeit");
 
-	$kostenLabel = array( "bahn","oeff","taxi","pkwkm","sonst");
+	$kostenLabel = array( "hotel","bahn","oeff","taxi","pkwkm","sonst");
 
 
+	echo "Ueber: "+$_REQUEST["ueber"];
 	$route = $_REQUEST["von"];
-	if (isset ($_REQUEST["ueber"]) && strlen($_REQUEST["ueber"]>0)) {
+	if (isset ($_REQUEST["ueber"]) && strlen($_REQUEST["ueber"])>0) {
 		$route.="+ über ".$_REQUEST["ueber"];
 	}
 	$route.= " nach ".$_REQUEST["nach"];
@@ -43,6 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 		if (! strcmp("pkwkm",$kst)) {
 			$val = $_REQUEST[$kst]*$pkwKm;
+			if ( $val > 150 ) { 
+				$val = 150;
+			}
 			$tpl->setVariable("COST_DESCR",$labels["pkwkm"]);
 			$tpl->setVariable("COST_UNIT",sprintf("%d km",$_REQUEST[$kst]));
 			$tpl->setVariable("COST_EACH","à ".money_format($EUR_FMT,$pkwKm));

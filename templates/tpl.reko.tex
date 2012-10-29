@@ -5,6 +5,7 @@
 \usepackage{color}
 \usepackage[a4paper,vmargin={20mm,20mm},hmargin={20mm,10mm}]{geometry}
 \usepackage{graphicx} 
+\usepackage[absolute]{textpos}
 \usepackage{ifthen}
 \usepackage{textcomp}
 \usepackage[official]{eurosym}
@@ -13,18 +14,20 @@
 %\renewcommand\familydefault{\sfdefault}
 \renewcommand{\familydefault}{\sfdefault}
 \begin{document}
+\input{bdzbrko2}
+\briefkopf
 \setlength{\parindent}{0mm}
 \begin{center}
 {\huge Reisekostenabrechnung}\\
-{\large {NAME}} \\
+{\large Bund Deutscher Zupfmusiker e.V.} \\
 \end{center}
 
 %\input{corikabrko}
 \section{Persönliche Angaben}
 \begin{tabular}[t]{ll}
 \textbf{Name:} & {NAME} \\
-\textbf{Straße:} & Turmstr. 65 \\
-\textbf{PLZ/Ort:} & 46539 Dinslaken \\
+\textbf{Straße:} & {STRASSE} \\
+\textbf{PLZ/Ort:} & {ORT} \\
 \textbf{Funktion im BDZ} &  {FKT} \\
 \\
 \textbf{Konto-Nummer:} & {KONTO} \\

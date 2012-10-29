@@ -32,20 +32,11 @@ function adjustTgRows(begDate,endDate) {
 	curDate.setMinutes(0);
 	curDate.setSeconds(0);
 
-	var num = $('.tgrow').length;
-	while (num > days && num > 1) {
-		$('#tgrow' + num).remove();
-		num--;
-	}
+	$('.tgrow').remove();
 
-	num = $('.tgrow').length;
-	while ( num > days ) {
-		$('#tgrow'+num).remove();
-		num--;
-	}
-	while (num < days ) {
+	for (var num=1;num < days-1;num++ ) {
 		newNum = num+1;
-		var newElem = $('#tgrow' + num).clone().attr('id', 'tgrow' + newNum);
+		var newElem = $('#tgrow' + num).clone().attr('id', 'tgrow' + newNum).attr('class','tgrow');
 		var subChilds = newElem.children('.tg_data');
 		subChilds.children('.tg_tag').attr('id', 'tg_tag' + newNum).attr('name','tg_tag'+newNum);
 		subChilds.children('.tg_f').attr('id', 'tg_f' + newNum).attr('name','tg_f'+newNum);
@@ -57,10 +48,9 @@ function adjustTgRows(begDate,endDate) {
 		$('#tg_f'+newNum).change(updateTagegelder);
 		$('#tg_m'+newNum).change(updateTagegelder);
 		$('#tg_a'+newNum).change(updateTagegelder);
-		num++;
 	} 
 
-	for (var i=1;i<= days ;i++ ) {
+	for (var i=1;i< days ;i++ ) {
 		$('#tg_tag'+i).val($.datepicker.formatDate('dd.mm.yy',curDate));
 		var secondDayBegin = new Date(curDate.getTime()+86400*1000);
 
@@ -137,17 +127,24 @@ function updateMitfahrer(nr) {
 	updateMasterSum();
 }
 
-
-function updateSum(fieldName,rate) {
-
+function updateSumMax(fieldName,rate,max) {
 	var field = $('#'+fieldName);
 
 	var num = new Number(rate);
 	num*=field.val();
 
+	if ( max != null && num.toFixed(2) > max ) {
+		num = max;
+	}
+
 	$('#'+fieldName+'_sum').val( num.toFixed(2));
 
 	updateMasterSum();
+
+}
+
+function updateSum(fieldName,rate) {
+  updateSumMax(fieldName,rate,null);
 }
 
 function datepicker_german() {
