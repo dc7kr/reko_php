@@ -25,35 +25,36 @@
 %\input{corikabrko}
 \section{Persönliche Angaben}
 \begin{tabular}[t]{ll}
-\textbf{Name:} & {NAME} \\
-\textbf{Straße:} & {STRASSE} \\
-\textbf{PLZ/Ort:} & {ORT} \\
-\textbf{Funktion im BDZ} &  {FKT} \\
+\textbf{Name:} & <%$reko_data["name"]%> \\
+\textbf{Straße:} & <%$reko_data["strasse"] %> \\
+\textbf{PLZ/Ort:} & <%$reko_data["ort"] %> \\
+\textbf{Funktion im BDZ} &  <%$reko_data["fkt"] %> \\
 \\
-\textbf{Konto-Nummer:} & {KONTO} \\
-\textbf{Bankleitzahl:} & {BLZ} \\
-\textbf{Name der Bank:} & {BANK} \\
+\textbf{IBAN:} & <%$reko_data["iban"] %> \\
+\textbf{BIC:} & <%$reko_data["bic"] %> \\
+\textbf{Name der Bank:} & <%$reko_data["bank"] %> \\
 \end{tabular}
 \section{Reisedetails}
 \begin{tabular}[t]{ll}
-\textbf{Reiseroute} & {ROUTE} \\
-\textbf{Beginn der Reise} & {BEGINN}, {BEGINNZEIT} \\
-\textbf{Ende der Reise} & {ENDE}, {ENDEZEIT} \\
-\textbf{Zweck der Reise} & {GRUND} \\
+\textbf{Reiseroute} & <%$reko_data["route"] %> \\
+\textbf{Beginn der Reise} & <%$reko_data["beginn"] %>, <%$reko_data["beginnZeit"] %> \\
+\textbf{Ende der Reise} & <%$reko_data["ende"] %>, <%$reko_data["endeZeit"] %> \\
+\textbf{Zweck der Reise} & <%$reko_data["grund"] %> \\
 \end{tabular}
 \section{Entstandene Kosten}
 \begin{tabular}[t]{lrlr}
-<!-- BEGIN COST_ROW -->
-{COST_DESCR} & {COST_UNIT} & {COST_EACH} & {COST_SUM} \\
-<!-- END COST_ROW -->
+
+<%foreach from=$reko_data["kosten"] item=cost_row %>
+<%$cost_row["descr"] %> & <%$cost_row["unit"] %> & <%$cost_row["each"] %> & <%$cost_row["sum"] %>\\
+<%/foreach %>
 \hline
-\textbf{Summe} & & & \textbf{ {MASTER_SUM}} \\
+\textbf{Summe} & & & \textbf{ <%$reko_data["master_sum"] %> } \\
 \hline
 \hline
 \end{tabular} \\
 \vspace{1cm}
 
-{ABWEICHUNGEN}
+<%$reko_data["abweichungen"] %>
 
 \vfill
 \begin{tabular}{lp{4em}l}
