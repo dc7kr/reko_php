@@ -32,9 +32,21 @@ function adjustTgRows(begDate,endDate) {
 	curDate.setMinutes(0);
 	curDate.setSeconds(0);
 
-	$('.tgrow').remove();
+//	$('#msgs').text('days: '+days);
 
-	for (var num=1;num < days-1;num++ ) {
+  // remove unnecessary rows (more rows than days of travel)
+	var num = $('.tgrow').length;
+	
+	while (num > days && num > 1) {
+		$('#tgrow' + num).remove();
+		num--;
+	}
+
+ 
+  var txt = $('#msgs').text(); 
+//	$('#msgs').text(txt+' num: '+num);
+
+	while (num < days ) {
 		newNum = num+1;
 		var newElem = $('#tgrow' + num).clone().attr('id', 'tgrow' + newNum).attr('class','tgrow');
 		var subChilds = newElem.children('.tg_data');
@@ -48,16 +60,21 @@ function adjustTgRows(begDate,endDate) {
 		$('#tg_f'+newNum).change(updateTagegelder);
 		$('#tg_m'+newNum).change(updateTagegelder);
 		$('#tg_a'+newNum).change(updateTagegelder);
+		num++
 	} 
 
-	for (var i=1;i< days ;i++ ) {
+	for (var i=1;i<= days ;i++ ) {
 		$('#tg_tag'+i).val($.datepicker.formatDate('dd.mm.yy',curDate));
 		var secondDayBegin = new Date(curDate.getTime()+86400*1000);
 
 		var hours=0;
 		if ( i == 1 ) {	
-			hours = secondDayBegin.getTime()-begDate.getTime();
-			hours = hours / 3600000; 
+      if ( days > 1 ) {
+				hours = secondDayBegin.getTime()-begDate.getTime();
+				hours = hours / 3600000; 
+			} else {
+				hours = (endDate.getHours()*60+endDate.getMinutes()-begDate.getHours()*60-begDate.getMinutes())/60;
+			}
 		} else if ( i == days ) {
 			hours = (endDate.getHours()*60+endDate.getMinutes())/60;
 		} else {
@@ -80,10 +97,21 @@ function adjustTgRows(begDate,endDate) {
 function updateMasterSum() {
 	var sum=0;
 	$('.summand').each(function(index) {
-		sum+= 1*$(this).val();
+
+    var txt = $(this).val();
+    txt = txt.replace(/,/g,".");
+    txt = txt.replace(/[^\d.-]/g, '');
+    $(this).val(txt);
+		sum+= 1*txt;
 	});
 
+  var total_fixed = sum.toFixed(2);
+
+  if (isNaN(total_fixed)) {
+    alert("Ungülties Zahlenformat!");
+  } else {
 	$('#master_sum').val(sum.toFixed(2));
+  }
 }
 
 function updateTagegelder() {
@@ -102,7 +130,6 @@ function updateTagegelder() {
 	endDate.setHours(endTime.getHours());
 	endDate.setMinutes(endTime.getMinutes());
 
-
 	adjustTgRows(begDate,endDate);
 	var days= Math.ceil((endDate.getTime()-begDate.getTime())/86400000);
 
@@ -116,14 +143,6 @@ function updateTagegelder() {
 		$('#tg_sum'+i).val(sum.toFixed(2));
 	}
 
-	updateMasterSum();
-}
-
-function updateMitfahrer(nr) {
-	var val= new Number($('#mitfkm'+nr).val());
-	val *=mitf_rate;
-
-	$('#mitfkm_sum'+nr).val(val.toFixed(2));
 	updateMasterSum();
 }
 
@@ -168,34 +187,4 @@ function datepicker_german() {
         $.datepicker.setDefaults($.datepicker.regional['de']);
 }
 
-function add_mitfahrer() {
-	var num     = $('.mitfkm').length;
-	var newNum  = new Number(num + 1);
-
-	var newElem = $('#mitf' + num).clone().attr('id', 'mitf' + newNum);
-
-	newElem.children('.mitfname').attr('id', 'mitfname' + newNum).attr('name', 'mitfname' + newNum);
-	newElem.children('.mitfkm').attr('id', 'mitfkm' + newNum).attr('name', 'mitfkm' + newNum);
-	newElem.children('.mitfkm_sum').attr('id', 'mitfkm_sum' + newNum).attr('name', 'mitfkm_sum' + newNum);
-	$('#mitf' + num).after(newElem);
-	$('#mitfkm'+newNum).change(function() {
-		updateMitfahrer(newNum);
-	});
-	$('#btnDel').removeAttr('disabled');
- 
-	if (newNum == 7) {
-	     $('#btnAdd').attr('disabled','disabled');
-	}
-}
-
-
-function del_mitfahrer() {
-	var num = $('.mitfkm').length;
- 
-	$('#mitf' + num).remove();
-	$('#btnAdd').removeAttr('disabled');
- 
-	if (num-1 == 1)
-		$('#btnDel').attr('disabled','disabled');
-}
 

@@ -1,5 +1,5 @@
 <?php
-  require __DIR__ . '/../vendor/autoload.php';
+  require __DIR__ . '/vendor/autoload.php';
 
   if (isset($_REQUEST["profile"])) {
     $meta = yaml_parse_file($_REQUEST["profile"].".yml");
